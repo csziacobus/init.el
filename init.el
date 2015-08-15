@@ -160,33 +160,35 @@
     (add-hook 'slime-repl-mode-hook (lambda () (font-lock-mode -1)))))
 
 ;; highlight numbers
-(add-hook 'prog-mode-hook 'highlight-numbers-mode)
-
-;; highlight format strings
-(use-package cl-format
+(use-package highlight-numbers
   :ensure t
-  :init
-  (progn
-    (defconst cl-fontify-defforms-alist
-      '((format . 2)
-        (formatter . 1)
-        (error . 1)
-        (signal . 1)
-        (warn . 1)
-        (cerror . 1)
-        (assert . 3)
-        (invalid-method-error . 2)
-        (method-combination-error . 2)
-        (break . 1)
-        (with-simple-restart . 2)
-        (y-or-n-p . 1)))
-    (add-hook 'lisp-mode-hook
-              (lambda ()
-                (set
-                 (make-local-variable 'cl-format-fontify-defforms-alist)
-                 (append cl-format-fontify-defforms-alist
-                         cl-fontify-defforms-alist))
-                (cl-format-font-lock-mode 1)))))
+  :config (add-hook 'prog-mode-hook 'highlight-numbers-mode))
+
+;; melpa doesn't have this
+;; highlight format strings
+;; (use-package cl-format
+;;   :init
+;;   (progn
+;;     (defconst cl-fontify-defforms-alist
+;;       '((format . 2)
+;;         (formatter . 1)
+;;         (error . 1)
+;;         (signal . 1)
+;;         (warn . 1)
+;;         (cerror . 1)
+;;         (assert . 3)
+;;         (invalid-method-error . 2)
+;;         (method-combination-error . 2)
+;;         (break . 1)
+;;         (with-simple-restart . 2)
+;;         (y-or-n-p . 1)))
+;;     (add-hook 'lisp-mode-hook
+;;               (lambda ()
+;;                 (set
+;;                  (make-local-variable 'cl-format-fontify-defforms-alist)
+;;                  (append cl-format-fontify-defforms-alist
+;;                          cl-fontify-defforms-alist))
+;;                 (cl-format-font-lock-mode 1)))))
 
 ;; display “lambda” as “λ”
 (global-prettify-symbols-mode 1)
