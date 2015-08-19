@@ -179,32 +179,6 @@
   :ensure t
   :config (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
-;; melpa doesn't have this
-;; highlight format strings
-;; (use-package cl-format
-;;   :init
-;;   (progn
-;;     (defconst cl-fontify-defforms-alist
-;;       '((format . 2)
-;;         (formatter . 1)
-;;         (error . 1)
-;;         (signal . 1)
-;;         (warn . 1)
-;;         (cerror . 1)
-;;         (assert . 3)
-;;         (invalid-method-error . 2)
-;;         (method-combination-error . 2)
-;;         (break . 1)
-;;         (with-simple-restart . 2)
-;;         (y-or-n-p . 1)))
-;;     (add-hook 'lisp-mode-hook
-;;               (lambda ()
-;;                 (set
-;;                  (make-local-variable 'cl-format-fontify-defforms-alist)
-;;                  (append cl-format-fontify-defforms-alist
-;;                          cl-fontify-defforms-alist))
-;;                 (cl-format-font-lock-mode 1)))))
-
 ;; display “lambda” as “λ”
 (global-prettify-symbols-mode 1)
 
@@ -330,11 +304,6 @@ cursor to the new line."
   :bind (("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring)))
 
-(use-package sage
-  :commands (run-sage sage-run)
-  :load-path "~/sage-6.7/local/share/emacs/site-lisp/sage-mode"
-  :config (setq sage-command "/home/charliezhang/sage-6.7/sage"))
-
 ;; ELDOC
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
@@ -367,7 +336,7 @@ cursor to the new line."
     ("6a9606327ecca6e772fba6ef46137d129e6d1888dcfc65d0b9b27a7a00a4af20" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
  '(package-selected-packages
    (quote
-    (aggressive-indent zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm cl-format auctex slime)))
+    (nnir nnit bbdb aggressive-indent zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
  '(preview-scale-function 2.0)
  '(slime-autodoc-delay 0.2)
  '(slime-autodoc-use-multiline-p nil)
