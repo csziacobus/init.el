@@ -16,7 +16,8 @@
       inhibit-startup-message t
       backup-directory-alist
       `(("." . ,(expand-file-name
-                 (concat user-emacs-directory "backups")))))
+                 (concat user-emacs-directory "backups"))))
+      load-prefer-newer t)
 
 ;; Make prompts 'y or n' instead of "yes" or "no"
 (fset 'yes-or-no-p #'y-or-n-p)
@@ -42,6 +43,12 @@
 
 (eval-when-compile
   (require 'use-package))
+
+(use-package auto-compile
+  :ensure t
+  :config (progn
+            (auto-compile-on-load-mode 1)
+            (auto-compile-on-save-mode 1)))
 
 (use-package diminish
   :ensure t)
