@@ -57,9 +57,8 @@
   :ensure t)
 
 ;; Save point position between sessions
-(require 'saveplace)
+(save-place-mode t)
 (setq-default save-place t)
-(setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
 ;;; Functions
 ;; Display function next to major mode
