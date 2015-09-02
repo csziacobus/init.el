@@ -279,29 +279,35 @@ cursor to the new line."
 (use-package helm
   :ensure t
   :diminish helm-mode
-  :init
-  (progn
-    (require 'helm-config)
-    (setq helm-candidate-number-limit 100)
-    ;; From https://gist.github.com/antifuchs/9238468
-    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-          helm-input-idle-delay 0.01  ; this actually updates things
+  :init (progn
+          (require 'helm-config)
+          (setq helm-candidate-number-limit 100)
+          ;; From https://gist.github.com/antifuchs/9238468
+          (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+                helm-input-idle-delay 0.01  ; this actually updates things
                                         ; reeeelatively quickly.
-          helm-yas-display-key-on-candidate t
-          helm-quick-update t
-          helm-M-x-requires-pattern nil
-          helm-ff-skip-boring-files t
-          helm-M-x-fuzzy-match t)
-    (helm-mode)
-    (helm-autoresize-mode)
-    ;; rebind tab to do persistent action
-    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-    ;; make TAB work in terminal
-    (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
-    ;; list actions using C-z
-    (define-key helm-map (kbd "C-z")  'helm-select-action))
+                helm-yas-display-key-on-candidate t
+                helm-quick-update t
+                helm-M-x-requires-pattern nil
+                helm-ff-skip-boring-files t
+                helm-M-x-fuzzy-match t
+                helm-buffers-fuzzy-matching t
+                helm-recentf-fuzzy-match    t
+                helm-semantic-fuzzy-match t
+                helm-imenu-fuzzy-match    t)
+          (helm-mode)
+          (helm-autoresize-mode)
+          ;; rebind tab to do persistent action
+          (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+          ;; make TAB work in terminal
+          (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+          ;; list actions using C-z
+          (define-key helm-map (kbd "C-z")  'helm-select-action))
   :bind (("M-x" . helm-M-x)
-         ("M-y" . helm-show-kill-ring)))
+         ("M-y" . helm-show-kill-ring)
+         ("C-x b" . helm-mini)
+         ("C-x C-f" . helm-find-files)
+         ("C-c i" . helm-semantic-or-imenu)))
 
 ;; ELDOC
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
