@@ -60,6 +60,10 @@
 (save-place-mode t)
 (setq-default save-place t)
 
+(use-package page-break-lines
+  :ensure t
+  :config (turn-on-page-break-lines-mode))
+
 ;;; Functions
 ;; Display function next to major mode
 (which-function-mode 1)
@@ -341,7 +345,7 @@ cursor to the new line."
     ("6a9606327ecca6e772fba6ef46137d129e6d1888dcfc65d0b9b27a7a00a4af20" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
  '(package-selected-packages
    (quote
-    (nnir nnit bbdb aggressive-indent zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
+    (page-break-line nnir nnit bbdb aggressive-indent zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
  '(preview-scale-function 2.0)
  '(slime-autodoc-delay 0.2)
  '(slime-autodoc-use-multiline-p nil)
