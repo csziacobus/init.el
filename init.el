@@ -185,10 +185,6 @@
 ;; display “lambda” as “λ”
 (global-prettify-symbols-mode 1)
 
-(use-package aggressive-indent
-  :ensure t
-  :init (global-aggressive-indent-mode))
-
 (use-package paredit
   :ensure t
   :init
@@ -280,6 +276,13 @@ cursor to the new line."
 
     (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)))
 
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-M-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)))
+
 (use-package helm
   :ensure t
   :diminish helm-mode
@@ -345,7 +348,7 @@ cursor to the new line."
     ("6a9606327ecca6e772fba6ef46137d129e6d1888dcfc65d0b9b27a7a00a4af20" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
  '(package-selected-packages
    (quote
-    (page-break-line nnir nnit bbdb aggressive-indent zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
+    (multiple-cursors cdlatex page-break-line nnir nnit bbdb zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
  '(preview-scale-function 2.0)
  '(slime-autodoc-delay 0.2)
  '(slime-autodoc-use-multiline-p nil)
