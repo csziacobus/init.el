@@ -137,7 +137,7 @@
   :ensure t
   :bind (("C-c SPC" . slime)
          ("C-c s" . slime-selector)
-         ("M-/" . slime-complete-symbol))
+         ("M-/" . completion-at-point))
   :config
   (progn
     (use-package ac-slime :ensure t)
@@ -241,7 +241,7 @@ cursor to the new line."
 
     (defun my-paredit-hook ()
       (enable-paredit-mode)
-      (turn-on-eldoc-mode)
+      (eldoc-mode)
       (eldoc-add-command
        'paredit-backward-delete
        'paredit-close-round)
@@ -317,9 +317,9 @@ cursor to the new line."
          ("C-c i" . helm-semantic-or-imenu)))
 
 ;; ELDOC
-(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+(add-hook 'ielm-mode-hook 'eldoc-mode)
 
 ;; zenburn theme
 
@@ -346,6 +346,10 @@ cursor to the new line."
  '(custom-safe-themes
    (quote
     ("6a9606327ecca6e772fba6ef46137d129e6d1888dcfc65d0b9b27a7a00a4af20" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
+ '(org-format-latex-options
+   (quote
+    (:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+                 ("begin" "$1" "$" "$$" "\\(" "\\["))))
  '(package-selected-packages
    (quote
     (multiple-cursors cdlatex page-break-line nnir nnit bbdb zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
