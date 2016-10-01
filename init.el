@@ -89,8 +89,8 @@
   :ensure t)
 
 ;; git gnus
-(add-to-list 'load-path "~/.emacs.d/gnus/lisp/")
-(require 'gnus-load)
+;; (add-to-list 'load-path "~/.emacs.d/gnus/lisp/")
+;; (require 'gnus-load)
 
 ;; magit
 (use-package magit
@@ -184,6 +184,13 @@
 
 ;; display “lambda” as “λ”
 (global-prettify-symbols-mode 1)
+
+(use-package rust-mode
+  :ensure t)
+
+(use-package cargo
+  :ensure t
+  :init (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package paredit
   :ensure t
