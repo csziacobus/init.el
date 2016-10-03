@@ -83,15 +83,6 @@
           (rename-buffer new-name)
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
-
-;; mail contacts
-(use-package bbdb
-  :ensure t)
-
-;; git gnus
-;; (add-to-list 'load-path "~/.emacs.d/gnus/lisp/")
-;; (require 'gnus-load)
-
 ;; magit
 (use-package magit
   :bind ("C-c v" . magit-status)
