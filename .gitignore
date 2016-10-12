@@ -1,0 +1,22 @@
+places
+recentf
+backups/
+auto-save-list/
+.gitmodules
+%backup%~
+elpa/
+eshell/
+gnus/
+tramp
+url/
+.mc-lists.el
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
