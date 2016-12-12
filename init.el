@@ -185,6 +185,14 @@
 ;; display “lambda” as “λ”
 (global-prettify-symbols-mode 1)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :init (exec-path-from-shell-initialize))
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
 (use-package paredit
   :ensure t
   :init
@@ -330,10 +338,20 @@ cursor to the new line."
          ("C-x C-f" . helm-find-files)
          ("C-c i" . helm-semantic-or-imenu)))
 
+(use-package helm-projectile
+  :ensure t)
+
 ;; ELDOC
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
 (add-hook 'ielm-mode-hook 'eldoc-mode)
+
+
+;; spelling
+(setq ispell-program-name "/usr/local/bin/aspell"
+  ispell-extra-args '("--sug-mode=ultra"))
+
+(add-hook 'org-mode-hook (lambda () (flyspell-mode 1)))
 
 ;; zenburn theme
 
