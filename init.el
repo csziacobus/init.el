@@ -44,53 +44,31 @@
 (eval-when-compile
   (require 'use-package))
 
-(use-package auto-compile
-  :ensure t
-  :config (progn
-            (auto-compile-on-load-mode 1)
-            (auto-compile-on-save-mode 1)))
-
 (use-package diminish
   :ensure t)
 
 (use-package bind-key
   :ensure t)
 
+(use-package auto-compile
+  :ensure t
+  :config (progn
+            (auto-compile-on-load-mode 1)
+            (auto-compile-on-save-mode 1)))
+
 ;; Save point position between sessions
-(save-place-mode t)
-(setq-default save-place t)
+
+(use-package saveplace
+  :init (save-place-mode t))
 
 (use-package page-break-lines
   :ensure t
-  :config (turn-on-page-break-lines-mode))
+  :init (turn-on-page-break-lines-mode))
 
 ;;; Functions
 ;; Display function next to major mode
-(which-function-mode 1)
-
-;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
-(defun rename-file-and-buffer (new-name)
-  "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
-      (if (get-buffer new-name)
-          (message "A buffer named '%s' already exists!" new-name)
-        (progn
-          (rename-file name new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil))))))
-
-;; mail contacts
-(use-package bbdb
-  :ensure t)
-
-;; git gnus
-(add-to-list 'load-path "~/.emacs.d/gnus/lisp/")
-(require 'gnus-load)
+(use-package which-func
+  :init (which-function-mode))
 
 ;; magit
 (use-package magit
@@ -100,14 +78,6 @@
 ;;;; Bindings
 (use-package eshell
   :bind ("C-c C-s" . eshell))
-
-(global-set-key [(control c) (control k)] 'kill-this-buffer)
-(global-set-key [(control c) (c)] 'compile)
-(global-set-key [(control x) (c)] 'toggle-window-split)
-(put 'erase-buffer 'disabled nil)
-
-;; auto fill mode
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;;;; Tex and LaTex
 (use-package tex-site
@@ -183,7 +153,15 @@
   :config (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
 ;; display “lambda” as “λ”
-(global-prettify-symbols-mode 1)
+(use-package prog-mode
+  :config (global-prettify-symbols-mode))
+
+(use-package rust-mode
+  :ensure t)
+
+(use-package cargo
+  :ensure t
+  :init (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package exec-path-from-shell
   :ensure t
@@ -284,20 +262,6 @@ cursor to the new line."
 
     (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)))
 
-;;; Unfill/fill
-(defun endless/fill-or-unfill ()
-  "Like `fill-paragraph', but unfill if used twice."
-  (interactive)
-  (let ((fill-column
-         (if (eq last-command 'endless/fill-or-unfill)
-             (progn (setq this-command nil)
-                    (point-max))
-           fill-column)))
-    (call-interactively #'fill-paragraph)))
-
-(global-set-key [remap fill-paragraph]
-                #'endless/fill-or-unfill)
-
 (use-package multiple-cursors
   :ensure t
   :bind (("C-M-c" . mc/edit-lines)
@@ -328,10 +292,10 @@ cursor to the new line."
           (helm-autoresize-mode)
           ;; rebind tab to do persistent action
           (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-          ;; make TAB work in terminal
+          ;; make TAB works in terminal
           (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
           ;; list actions using C-z
-          (define-key helm-map (kbd "C-z")  'helm-select-action))
+          (define-key helm-map (kbd "C-z") 'helm-select-action))
   :bind (("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-mini)
@@ -341,10 +305,18 @@ cursor to the new line."
 (use-package helm-projectile
   :ensure t)
 
+(use-package helm-descbinds
+  :ensure t
+  :bind (("C-h b" . helm-descbinds)
+         ("C-h w" . helm-descbinds)))
+
 ;; ELDOC
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-(add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
-(add-hook 'ielm-mode-hook 'eldoc-mode)
+(use-package eldoc
+  :config
+  (progn
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+    (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+    (add-hook 'ielm-mode-hook 'eldoc-mode)))
 
 
 ;; spelling
@@ -357,17 +329,53 @@ cursor to the new line."
 
 (use-package zenburn
   :ensure zenburn-theme
-  :init
-  (progn
-    (load-theme 'zenburn t)
-    (set-face-attribute 'region nil :background "#666")))
+  :init (load-theme 'zenburn t)
+  :config (set-face-attribute 'region nil :background "#666"))
 
 ;; FACES
-(with-eval-after-load "paren"
-  (set-face-background 'show-paren-match "#0066ff")
-  (set-face-foreground 'show-paren-match "#def"))
+(use-package paren
+  :config
+  (progn
+    (set-face-background 'show-paren-match "#0066ff")
+    (set-face-foreground 'show-paren-match "#def")))
 
 (setq-default indent-tabs-mode nil)
+
+;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
+(defun rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+          (message "A buffer named '%s' already exists!" new-name)
+        (progn
+          (rename-file name new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil))))))
+
+
+;;; Unfill/fill
+(defun endless/fill-or-unfill ()
+  "Like `fill-paragraph', but unfill if used twice."
+  (interactive)
+  (let ((fill-column
+         (if (eq last-command 'endless/fill-or-unfill)
+             (progn (setq this-command nil)
+                    (point-max))
+           fill-column)))
+    (call-interactively #'fill-paragraph)))
+
+(global-set-key [remap fill-paragraph]
+                #'endless/fill-or-unfill)
+
+
+(global-set-key [(control c) (c)] 'compile)
+(global-set-key [(control x) (c)] 'toggle-window-split)
+(put 'erase-buffer 'disabled nil)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -384,7 +392,7 @@ cursor to the new line."
                  ("begin" "$1" "$" "$$" "\\(" "\\["))))
  '(package-selected-packages
    (quote
-    (multiple-cursors cdlatex page-break-line nnir nnit bbdb zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
+    (helm-descbinds multiple-cursors cdlatex page-break-line nnir nnit bbdb zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
  '(preview-scale-function 2.0)
  '(slime-autodoc-delay 0.2)
  '(slime-autodoc-use-multiline-p nil)
