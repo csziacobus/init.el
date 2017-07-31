@@ -103,6 +103,10 @@
   :ensure t
   :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode) t)
 
+;;; add equalp and fix mdot
+(use-package cl
+  :ensure t)
+
 (use-package slime
   :ensure t
   :bind (("C-c SPC" . slime)
@@ -318,12 +322,14 @@ cursor to the new line."
     (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
     (add-hook 'ielm-mode-hook 'eldoc-mode)))
 
-
 ;; spelling
 (setq ispell-program-name "/usr/local/bin/aspell"
   ispell-extra-args '("--sug-mode=ultra"))
 
 (add-hook 'org-mode-hook (lambda () (flyspell-mode 1)))
+
+(use-package sml-mode
+  :ensure t)
 
 ;; zenburn theme
 
@@ -405,3 +411,4 @@ cursor to the new line."
  '(default ((t (:family "DejaVu Sans Mono" :foundry "unknown" :slant normal :weight normal :height 139 :width normal))))
  '(slime-repl-inputed-output-face ((t (:foreground "coral")))))
 (put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
