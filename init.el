@@ -398,7 +398,7 @@ cursor to the new line."
                  ("begin" "$1" "$" "$$" "\\(" "\\["))))
  '(package-selected-packages
    (quote
-    (helm-descbinds multiple-cursors cdlatex page-break-line nnir nnit bbdb zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
+    (sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
  '(preview-scale-function 2.0)
  '(slime-autodoc-delay 0.2)
  '(slime-autodoc-use-multiline-p nil)
