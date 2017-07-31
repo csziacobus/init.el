@@ -44,14 +44,13 @@
 (eval-when-compile
   (require 'use-package))
 
-(use-package diminish
-  :ensure t)
+(setq-default use-package-always-ensure t)
 
-(use-package bind-key
-  :ensure t)
+(use-package diminish)
+
+(use-package bind-key)
 
 (use-package auto-compile
-  :ensure t
   :config (progn
             (auto-compile-on-load-mode 1)
             (auto-compile-on-save-mode 1)))
@@ -62,7 +61,6 @@
   :init (save-place-mode t))
 
 (use-package page-break-lines
-  :ensure t
   :init (turn-on-page-break-lines-mode))
 
 ;;; Functions
@@ -72,8 +70,7 @@
 
 ;; magit
 (use-package magit
-  :bind ("C-c v" . magit-status)
-  :ensure t)
+  :bind ("C-c v" . magit-status))
 
 ;;;; Bindings
 (use-package eshell
@@ -100,21 +97,18 @@
     (setq reftex-plug-into-AUCTeX t)))
 
 (use-package rainbow-delimiters
-  :ensure t
   :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode) t)
 
 ;;; add equalp and fix mdot
-(use-package cl
-  :ensure t)
+(use-package cl)
 
 (use-package slime
-  :ensure t
   :bind (("C-c SPC" . slime)
          ("C-c s" . slime-selector)
          ("M-/" . completion-at-point))
   :config
   (progn
-    (use-package ac-slime :ensure t)
+    (use-package ac-slime)
     (setq inferior-lisp-program "sbcl")
     (slime-setup '(slime-fancy
                    slime-indentation
@@ -153,30 +147,25 @@
 
 ;; highlight numbers
 (use-package highlight-numbers
-  :ensure t
   :config (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
 ;; display “lambda” as “λ”
 (use-package prog-mode
+  :ensure nil
   :config (global-prettify-symbols-mode))
 
-(use-package rust-mode
-  :ensure t)
+(use-package rust-mode)
 
 (use-package cargo
-  :ensure t
   :init (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package exec-path-from-shell
-  :ensure t
   :init (exec-path-from-shell-initialize))
 
 (use-package flycheck
-  :ensure t
   :init (global-flycheck-mode))
 
 (use-package paredit
-  :ensure t
   :init
   (progn
     (add-hook 'emacs-lisp-mode-hook       #'my-paredit-hook)
@@ -267,14 +256,12 @@ cursor to the new line."
     (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)))
 
 (use-package multiple-cursors
-  :ensure t
   :bind (("C-M-c" . mc/edit-lines)
          ("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)))
 
 (use-package helm
-  :ensure t
   :diminish helm-mode
   :init (progn
           (require 'helm-config)
@@ -306,11 +293,9 @@ cursor to the new line."
          ("C-x C-f" . helm-find-files)
          ("C-c i" . helm-semantic-or-imenu)))
 
-(use-package helm-projectile
-  :ensure t)
+(use-package helm-projectile)
 
 (use-package helm-descbinds
-  :ensure t
   :bind (("C-h b" . helm-descbinds)
          ("C-h w" . helm-descbinds)))
 
@@ -323,13 +308,14 @@ cursor to the new line."
     (add-hook 'ielm-mode-hook 'eldoc-mode)))
 
 ;; spelling
-(setq ispell-program-name "/usr/local/bin/aspell"
-  ispell-extra-args '("--sug-mode=ultra"))
+(when (eq system-type 'darwin)
+  (setq ispell-program-name "/usr/local/bin/aspell"
+        ispell-extra-args '("--sug-mode=ultra")))
 
-(add-hook 'org-mode-hook (lambda () (flyspell-mode 1)))
+(use-package org
+  :config (add-hook 'org-mode-hook (lambda () (flyspell-mode 1))))
 
-(use-package sml-mode
-  :ensure t)
+(use-package sml-mode)
 
 ;; zenburn theme
 
@@ -363,7 +349,6 @@ cursor to the new line."
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
-
 ;;; Unfill/fill
 (defun endless/fill-or-unfill ()
   "Like `fill-paragraph', but unfill if used twice."
@@ -377,7 +362,6 @@ cursor to the new line."
 
 (global-set-key [remap fill-paragraph]
                 #'endless/fill-or-unfill)
-
 
 (global-set-key [(control c) (c)] 'compile)
 (global-set-key [(control x) (c)] 'toggle-window-split)
