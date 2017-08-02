@@ -19,6 +19,9 @@
                  (concat user-emacs-directory "backups"))))
       load-prefer-newer t)
 
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
 ;; Make prompts 'y or n' instead of "yes" or "no"
 (fset 'yes-or-no-p #'y-or-n-p)
 
@@ -50,18 +53,14 @@
 
 (use-package bind-key)
 
-(use-package auto-compile
-  :config (progn
-            (auto-compile-on-load-mode 1)
-            (auto-compile-on-save-mode 1)))
-
 ;; Save point position between sessions
 
 (use-package saveplace
   :init (save-place-mode t))
 
 (use-package page-break-lines
-  :init (turn-on-page-break-lines-mode))
+  :disabled
+  :config (page-break-lines-mode))
 
 ;;; Functions
 ;; Display function next to major mode
@@ -97,12 +96,11 @@
     (setq reftex-plug-into-AUCTeX t)))
 
 (use-package rainbow-delimiters
-  :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode) t)
-
-;;; add equalp and fix mdot
-(use-package cl)
+  :commands rainbow-delimiters-mode
+  :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 (use-package slime
+  :defer t
   :bind (("C-c SPC" . slime)
          ("C-c s" . slime-selector)
          ("M-/" . completion-at-point))
@@ -145,27 +143,36 @@
     (put 'set-dispatch-macro-character 'common-lisp-indent-function 2)
     (add-hook 'slime-repl-mode-hook (lambda () (font-lock-mode -1)))))
 
+;;; add equalp and fix mdot
+(use-package cl
+  :after slime)
+
 ;; highlight numbers
 (use-package highlight-numbers
-  :config (add-hook 'prog-mode-hook 'highlight-numbers-mode))
+  :commands highlight-numbers-mode
+  :init (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
 ;; display “lambda” as “λ”
 (use-package prog-mode
   :ensure nil
   :config (global-prettify-symbols-mode))
 
-(use-package rust-mode)
+(use-package rust-mode
+  :mode "\\.rs\\'")
 
 (use-package cargo
+  :commands cargo-minor-mode
   :init (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package exec-path-from-shell
-  :init (exec-path-from-shell-initialize))
+  :if (memq window-system '(mac ns))
+  :config (exec-path-from-shell-initialize))
 
 (use-package flycheck
   :init (global-flycheck-mode))
 
 (use-package paredit
+  :commands my-paredit-hook
   :init
   (progn
     (add-hook 'emacs-lisp-mode-hook       #'my-paredit-hook)
@@ -256,44 +263,49 @@ cursor to the new line."
     (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)))
 
 (use-package multiple-cursors
+  :disabled
   :bind (("C-M-c" . mc/edit-lines)
          ("C->" . mc/mark-next-like-this)
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)))
 
 (use-package helm
+  :defer 1
   :diminish helm-mode
-  :init (progn
-          (require 'helm-config)
-          (setq helm-candidate-number-limit 100)
-          ;; From https://gist.github.com/antifuchs/9238468
-          (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-                helm-input-idle-delay 0.01  ; this actually updates things
+  :config
+  (progn
+    (require 'helm-config)
+    (setq helm-candidate-number-limit 100)
+    ;; From https://gist.github.com/antifuchs/9238468
+    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+          helm-input-idle-delay 0.01  ; this actually updates things
                                         ; reeeelatively quickly.
-                helm-yas-display-key-on-candidate t
-                helm-quick-update t
-                helm-M-x-requires-pattern nil
-                helm-ff-skip-boring-files t
-                helm-M-x-fuzzy-match t
-                helm-buffers-fuzzy-matching t
-                helm-recentf-fuzzy-match    t
-                helm-semantic-fuzzy-match t
-                helm-imenu-fuzzy-match    t)
-          (helm-mode)
-          (helm-autoresize-mode)
-          ;; rebind tab to do persistent action
-          (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-          ;; make TAB works in terminal
-          (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
-          ;; list actions using C-z
-          (define-key helm-map (kbd "C-z") 'helm-select-action))
+          helm-yas-display-key-on-candidate t
+          helm-quick-update t
+          helm-M-x-requires-pattern nil
+          helm-ff-skip-boring-files t
+          helm-M-x-fuzzy-match t
+          helm-buffers-fuzzy-matching t
+          helm-recentf-fuzzy-match    t
+          helm-semantic-fuzzy-match t
+          helm-imenu-fuzzy-match    t)
+    (helm-mode)
+    (helm-autoresize-mode))
   :bind (("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-mini)
          ("C-x C-f" . helm-find-files)
-         ("C-c i" . helm-semantic-or-imenu)))
+         ("C-c i" . helm-semantic-or-imenu))
+  :bind (:map helm-map
+              ;; rebind tab to do persistent action
+              ("<tab>" . helm-execute-persistent-action)
+              ;; make TAB works in terminal
+              ("C-i" . helm-execute-persistent-action)
+              ;; list actions using C-z
+              ("C-z" . helm-select-action)))
 
-(use-package helm-projectile)
+(use-package helm-projectile
+  :after helm)
 
 (use-package helm-descbinds
   :bind (("C-h b" . helm-descbinds)
@@ -301,7 +313,8 @@ cursor to the new line."
 
 ;; ELDOC
 (use-package eldoc
-  :config
+  :commands eldoc-mode
+  :init
   (progn
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
     (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
@@ -313,15 +326,15 @@ cursor to the new line."
         ispell-extra-args '("--sug-mode=ultra")))
 
 (use-package org
+  :defer t
   :config (add-hook 'org-mode-hook (lambda () (flyspell-mode 1))))
 
-(use-package sml-mode)
+(use-package sml-mode
+  :mode "\\sml\\'")
 
 ;; zenburn theme
-
-(use-package zenburn
-  :ensure zenburn-theme
-  :init (load-theme 'zenburn t)
+(use-package zenburn-theme
+  :demand t
   :config (set-face-attribute 'region nil :background "#666"))
 
 ;; FACES
@@ -394,5 +407,3 @@ cursor to the new line."
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono" :foundry "unknown" :slant normal :weight normal :height 139 :width normal))))
  '(slime-repl-inputed-output-face ((t (:foreground "coral")))))
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
