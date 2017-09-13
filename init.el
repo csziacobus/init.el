@@ -330,7 +330,8 @@ cursor to the new line."
   :config (add-hook 'org-mode-hook (lambda () (flyspell-mode 1))))
 
 (use-package sml-mode
-  :mode "\\sml\\'")
+  :mode "\\.sml\\'"
+  :config (add-hook 'sml-mode-hook (lambda () (electric-indent-mode nil))))
 
 ;; zenburn theme
 (use-package zenburn-theme
@@ -349,7 +350,7 @@ cursor to the new line."
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
+  (interactive "New name: ")
   (let ((name (buffer-name))
         (filename (buffer-file-name)))
     (if (not filename)
