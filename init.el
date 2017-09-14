@@ -17,7 +17,8 @@
       backup-directory-alist
       `(("." . ,(expand-file-name
                  (concat user-emacs-directory "backups"))))
-      load-prefer-newer t)
+      load-prefer-newer t
+      tab-always-indent 'complete)
 
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
