@@ -328,7 +328,9 @@ cursor to the new line."
 
 (use-package org
   :defer t
-  :config (add-hook 'org-mode-hook (lambda () (flyspell-mode 1))))
+  :config (add-hook 'org-mode-hook (lambda ()
+                                     (auto-fill-mode 1)
+                                     (flyspell-mode 1))))
 
 (use-package sml-mode
   :mode "\\.sml\\'"
