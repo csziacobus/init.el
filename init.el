@@ -334,6 +334,9 @@ cursor to the new line."
   :mode "\\.sml\\'"
   :config (add-hook 'sml-mode-hook (lambda () (electric-indent-mode nil))))
 
+(use-package clang-format
+  :config (setq clang-format-style-option "llvm"))
+
 ;; zenburn theme
 (use-package zenburn-theme
   :demand t
@@ -397,7 +400,7 @@ cursor to the new line."
                  ("begin" "$1" "$" "$$" "\\(" "\\["))))
  '(package-selected-packages
    (quote
-    (sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
+    (clang-format cov sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
  '(preview-scale-function 2.0)
  '(slime-autodoc-delay 0.2)
  '(slime-autodoc-use-multiline-p nil)
