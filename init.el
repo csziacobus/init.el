@@ -98,8 +98,17 @@
     (setq reftex-plug-into-AUCTeX t)))
 
 (use-package rainbow-delimiters
-  :commands rainbow-delimiters-mode
-  :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package company
+  :hook (after-init . global-company-mode)
+  :config
+  (company-tng-configure-default)
+  :bind (("TAB" . company-indent-or-complete-common)))
+
+(use-package company-quickhelp
+  :after company
+  :hook (after-init . company-quickhelp-mode))
 
 (use-package slime
   :defer t
