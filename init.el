@@ -117,15 +117,14 @@
          ("M-/" . completion-at-point))
   :config
   (progn
-    (use-package ac-slime)
     (setq inferior-lisp-program "sbcl")
     (slime-setup '(slime-fancy
+                   slime-company
                    slime-indentation
-                                        ;slime-js
+                   ;slime-js
                    slime-xref-browser
-                   slime-asdf
+                   ; slime-asdf
                    slime-presentations
-                   slime-presentation-streams
                    slime-mrepl
                    slime-mdot-fu
                    ))
@@ -140,28 +139,32 @@
             (ccl ("~/bin/ccl64"))
             (ecl ("ecl"))
             (clisp ("clisp"))
-            (sbcl-dev ("~/sbcl/run-sbcl.sh")))
-          slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/")
-          slime-load-failed-fasl 'always)
+            (cmucl ("cmucl"))
+            (clisp-dev ("~/clisp/src/full/lisp.run" "-M/home/charliezhang/clisp/src/full/lispinit.mem"))
+            (sbcl-dev ("~/sbcl/run-sbcl.sh"))
+            (clasp-dev ("~/clasp/build/clasp"))
+            (bclasp ("~/clasp/build/boehm/iclasp-boehm" "-i/home/charliezhang/clasp/build/boehm/fasl/bclasp-boehm-image.fasl")))
+          slime-compile-file-options '(:fasl-directory "/tmp/slime-fasls/"))
     (set (make-local-variable lisp-indent-function)
          'common-lisp-indent-function)
     ;; autodoc fix
     (eldoc-add-command 'slime-space)
     (make-directory "/tmp/slime-fasls/" t)
-    (add-hook 'slime-mode-hook 'set-up-slime-ac)
-    (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
     (put 'set-macro-character 'common-lisp-indent-function 1)
     (put 'set-dispatch-macro-character 'common-lisp-indent-function 2)
     (add-hook 'slime-repl-mode-hook (lambda () (font-lock-mode -1)))))
 
+(use-package geiser)
+
+(use-package slime-company
+  :after (slime company))
+
 ;;; add equalp and fix mdot
-(use-package cl
-  :after slime)
+; (use-package cl-lib)
 
 ;; highlight numbers
 (use-package highlight-numbers
-  :commands highlight-numbers-mode
-  :init (add-hook 'prog-mode-hook 'highlight-numbers-mode))
+  :hook (prog-mode-hook . highlight-numbers-mode))
 
 ;; display “lambda” as “λ”
 (use-package prog-mode
@@ -172,8 +175,11 @@
   :mode "\\.rs\\'")
 
 (use-package cargo
-  :commands cargo-minor-mode
-  :init (add-hook 'rust-mode-hook 'cargo-minor-mode))
+  :hook (rust-mode-hook . cargo-minor-mode))
+
+(use-package flycheck-rust
+  :ensure t
+  :hook (flycheck-mode-hook . flycheck-rust-setup))
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
@@ -183,95 +189,19 @@
   :init (global-flycheck-mode))
 
 (use-package paredit
-  :commands my-paredit-hook
-  :init
-  (progn
-    (add-hook 'emacs-lisp-mode-hook       #'my-paredit-hook)
-    (add-hook 'eval-expression-minibuffer-setup-hook #'my-paredit-hook)
-    (add-hook 'ielm-mode-hook             #'my-paredit-hook)
-    (add-hook 'lisp-mode-hook             #'my-paredit-hook)
-    (add-hook 'lisp-interaction-mode-hook #'my-paredit-hook)
-    (add-hook 'scheme-mode-hook           #'my-paredit-hook)
-    (add-hook 'slime-repl-mode-hook #'my-paredit-hook)
-
-    (modify-syntax-entry ?[ "(]" lisp-mode-syntax-table)
-    (modify-syntax-entry ?] ")[" lisp-mode-syntax-table))
-  :config
-  (progn
-    (defun paredit-wrap-round-from-behind ()
-      (interactive)
-      (forward-sexp -1)
-      (paredit-wrap-round)
-      (insert " ")
-      (forward-char -1))
-
-    (defun paredit-wrap-square-from-behind ()
-      (interactive)
-      (forward-sexp -1)
-      (paredit-wrap-square))
-
-    (defun paredit-wrap-curly-from-behind ()
-      (interactive)
-      (forward-sexp -1)
-      (paredit-wrap-curly))
-
-    (defun paredit-kill-region-or-backward-word ()
-      (interactive)
-      (if (region-active-p)
-          (kill-region (region-beginning) (region-end))
-        (paredit-backward-kill-word)))
-
-    (defvar electrify-return-match
-      "[\]}\)\"]"
-      "If this regexp matches the text after the cursor, do an \"electric\" return.")
-
-    (defun electrify-return-if-match (arg)
-      "If the text after the cursor matches `electrify-return-match' then
-open and indent an empty line between the cursor and the text.  Move the
-cursor to the new line."
-      (interactive "P")
-      (let ((case-fold-search nil))
-        (if (looking-at electrify-return-match)
-            (save-excursion (newline-and-indent)))
-        (newline arg)
-        (indent-according-to-mode)))
-
-    (defun my-paredit-hook ()
-      (enable-paredit-mode)
-      (eldoc-mode)
-      (eldoc-add-command
-       'paredit-backward-delete
-       'paredit-close-round)
-      (local-set-key (kbd "RET") 'electrify-return-if-match)
-      (eldoc-add-command 'electrify-return-if-match)
-      (show-paren-mode t)
-      (define-key paredit-mode-map (kbd "M-(")
-        'paredit-wrap-round)
-      (define-key paredit-mode-map (kbd "M-)")
-        'paredit-wrap-round-from-behind)
-      (define-key paredit-mode-map (kbd "M-]")
-        'paredit-wrap-square)
-      (define-key paredit-mode-map (kbd "M-[")
-        'paredit-wrap-square-from-behind)
-      (define-key paredit-mode-map (kbd "M-s-[")
-        'paredit-wrap-curly)
-      (define-key paredit-mode-map (kbd "M-s-]")
-        'paredit-wrap-curly-from-behind)
-      ;; CAVE: Zaps X Server by default
-      (define-key paredit-mode-map (kbd "M-C-<backspace>")
-        'backward-kill-sexp)
-      (define-key paredit-mode-map (kbd "\\")
-        nil)
-      (define-key paredit-mode-map (kbd "C-w")
-        'paredit-kill-region-or-backward-word))
-
-    ;; Stop SLIME's REPL from grabbing DEL,
-    ;; which is annoying when backspacing over a '('
-    (defun override-slime-repl-bindings-with-paredit ()
-      (define-key slime-repl-mode-map
-        (read-kbd-macro paredit-backward-delete-key) nil))
-
-    (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)))
+  :preface
+  (defun override-slime-repl-bindings-with-paredit ()
+    (define-key slime-repl-mode-map
+      (read-kbd-macro paredit-backward-delete-key) nil))
+  :hook ((emacs-lisp-mode
+          eval-expression-minibuffer-setup
+          ielm-mode
+          lisp-mode
+          lisp-interaction-mode
+          scheme-mode
+          slime-repl-mode)
+         . paredit-mode)
+  :hook (slime-repl-mode . override-slime-repl-bindings-with-paredit))
 
 (use-package multiple-cursors
   :disabled
@@ -316,20 +246,38 @@ cursor to the new line."
               ("C-z" . helm-select-action)))
 
 (use-package helm-projectile
-  :after helm)
+  :after helm
+  :init
+  (projectile-mode)
+  (setq projectile-completion-system 'helm)
+  (helm-projectile-on))
 
 (use-package helm-descbinds
   :bind (("C-h b" . helm-descbinds)
          ("C-h w" . helm-descbinds)))
 
+(use-package helm-bibtex
+  :after helm)
+
+;; JS
+(use-package skewer-mode
+  :hook (js2-mode-hook . skewer-mode))
+
+(setq browse-url-browser-function 'browse-url-firefox)
+(setq browse-url-firefox-program "/home/charliezhang/firefox/firefox")
+
 ;; ELDOC
 (use-package eldoc
-  :commands eldoc-mode
-  :init
-  (progn
-    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
-    (add-hook 'ielm-mode-hook 'eldoc-mode)))
+  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode)
+         . eldoc-mode))
+
+(use-package elpy
+  :hook (python-mode . elpy-mode)
+  :commands (elpy-mode elpy-enable)
+  :bind (:map elpy-mode-map
+              ("C-c C-c" . elpy-shell-send-top-statement)
+              ("C-x C-e" . elpy-shell-send-statement)
+              ("C-c C-r" . elpy-shell-send-region-or-buffer)))
 
 ;; spelling
 (when (eq system-type 'darwin)
@@ -338,13 +286,44 @@ cursor to the new line."
 
 (use-package org
   :defer t
-  :config (add-hook 'org-mode-hook (lambda ()
-                                     (auto-fill-mode 1)
-                                     (flyspell-mode 1))))
+  :config
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (add-to-list 'org-export-backends 'beamer)
+  (add-hook 'org-mode-hook (lambda ()
+                             (auto-fill-mode 1)
+                             (flyspell-mode 1)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (setq org-file-apps
+                    (remove '("\\.pdf\\'" . default) org-file-apps))
+              (add-to-list 'org-file-apps '("\\.pdf\\'" . "evince %s")))))
+
+(use-package org-ref)
 
 (use-package sml-mode
   :mode "\\.sml\\'"
-  :config (add-hook 'sml-mode-hook (lambda () (electric-indent-mode nil))))
+  :config (add-hook 'sml-mode-hook (lambda ()
+                                     (electric-indent-local-mode -1))))
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "pandoc"))
+
+(use-package haskell-mode
+  :mode "\\.hs\\'"
+  :commands haskell-mode
+  :config
+  (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (add-hook 'haskell-mode-hook 'flycheck-mode)
+  (add-hook 'haskell-mode-hook (lambda ()
+                                 (add-hook 'before-save-hook
+                                           'haskell-mode-format-imports
+                                           nil
+                                           'local))))
 
 (use-package clang-format
   :config (setq clang-format-style-option "llvm"))
@@ -354,8 +333,11 @@ cursor to the new line."
   :demand t
   :config (set-face-attribute 'region nil :background "#666"))
 
+(load-theme 'zenburn t)
+
 ;; FACES
 (use-package paren
+  :hook (paredit-mode . show-paren-mode)
   :config
   (progn
     (set-face-background 'show-paren-match "#0066ff")
@@ -395,8 +377,8 @@ cursor to the new line."
 (global-set-key [remap fill-paragraph]
                 #'endless/fill-or-unfill)
 
-(global-set-key [(control c) (c)] 'compile)
-(global-set-key [(control x) (c)] 'toggle-window-split)
+(global-set-key [(control c) (d)] 'compile)
+
 (put 'erase-buffer 'disabled nil)
 
 (custom-set-variables
@@ -404,21 +386,37 @@ cursor to the new line."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(browse-url-browser-function (quote eww-browse-url))
+ '(browse-url-browser-function 'eww-browse-url)
  '(custom-safe-themes
-   (quote
-    ("6a9606327ecca6e772fba6ef46137d129e6d1888dcfc65d0b9b27a7a00a4af20" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
+   '("2a739405edf418b8581dcd176aaf695d319f99e3488224a3c495cb0f9fd814e3" "6a9606327ecca6e772fba6ef46137d129e6d1888dcfc65d0b9b27a7a00a4af20" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default))
+ '(helm-external-programs-associations '(("pdf" . "evince")))
+ '(org-agenda-files '("~/Dropbox/berkeley/ling55/paper/paper.org"))
  '(org-format-latex-options
-   (quote
-    (:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-                 ("begin" "$1" "$" "$$" "\\(" "\\["))))
+   '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+                 ("begin" "$1" "$" "$$" "\\(" "\\[")))
  '(package-selected-packages
-   (quote
-    (clang-format cov sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime)))
- '(preview-scale-function 2.0)
+   '(clang-format cov geiser m2-mode m2 flycheck-rust elisp-slime-nav skewer-mode skewer elpy-mode markdown-mode slime-company company-quickhelp rainbow-delimiters-mode company org-ref haskell-mode org helm-bibtex elpy mu4e sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime))
+ '(preview-scale-function 4.0)
+ '(safe-local-variable-values
+   '((c-file-offsets
+      (innamespace . 0)
+      (substatement-open . 0)
+      (c . c-lineup-dont-change)
+      (inextern-lang . 0)
+      (comment-intro . c-lineup-dont-change)
+      (arglist-cont-nonempty . c-lineup-arglist)
+      (block-close . 0)
+      (statement-case-intro . ++)
+      (brace-list-intro . ++)
+      (cpp-define-intro . +))
+     (c-auto-align-backslashes)
+     (whitespace-style quote
+                       (face trailing empty tabs))
+     (whitespace-action)))
+ '(send-mail-function 'smtpmail-send-it)
  '(slime-autodoc-delay 0.2)
  '(slime-autodoc-use-multiline-p nil)
- '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol)))
+ '(slime-complete-symbol-function 'slime-fuzzy-complete-symbol))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
