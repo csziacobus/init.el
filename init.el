@@ -19,7 +19,8 @@
       `(("." . ,(expand-file-name
                  (concat user-emacs-directory "backups"))))
       load-prefer-newer t
-      tab-always-indent 'complete)
+      tab-always-indent 'complete
+      mac-command-modifier 'meta)
 
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -72,6 +73,9 @@
 ;; magit
 (use-package magit
   :bind ("C-c v" . magit-status))
+
+(use-package forge
+  :after magit)
 
 ;;;; Bindings
 (use-package eshell
@@ -395,7 +399,7 @@
    '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
                  ("begin" "$1" "$" "$$" "\\(" "\\[")))
  '(package-selected-packages
-   '(clang-format cov geiser m2-mode m2 flycheck-rust elisp-slime-nav skewer-mode skewer elpy-mode markdown-mode slime-company company-quickhelp rainbow-delimiters-mode company org-ref haskell-mode org helm-bibtex elpy mu4e sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime))
+   '(forge magit-gh-pulls clang-format cov geiser m2-mode m2 flycheck-rust elisp-slime-nav skewer-mode skewer elpy-mode markdown-mode slime-company company-quickhelp rainbow-delimiters-mode company org-ref haskell-mode org helm-bibtex elpy mu4e sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime))
  '(preview-scale-function 4.0)
  '(safe-local-variable-values
    '((c-file-offsets
