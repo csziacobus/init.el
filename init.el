@@ -158,8 +158,6 @@
     (put 'set-dispatch-macro-character 'common-lisp-indent-function 2)
     (add-hook 'slime-repl-mode-hook (lambda () (font-lock-mode -1)))))
 
-(use-package geiser)
-
 (use-package slime-company
   :after (slime company))
 
