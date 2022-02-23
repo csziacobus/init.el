@@ -292,6 +292,7 @@
   :defer t
   :config
   (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-return-follows-link t)
   (add-to-list 'org-export-backends 'beamer)
   (add-hook 'org-mode-hook (lambda ()
                              (auto-fill-mode 1)
