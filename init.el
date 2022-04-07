@@ -130,8 +130,8 @@
                    ; slime-asdf
                    slime-presentations
                    slime-mrepl
-                   slime-mdot-fu
-                   ))
+                   slime-sprof
+                   slime-mdot-fu))
     ;; customizations
     (setq lisp-lambda-list-keyword-parameter-alignment t
           lisp-lambda-list-keyword-alignment t
