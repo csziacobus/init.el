@@ -305,6 +305,9 @@
 
 (use-package org-ref)
 
+(use-package lsp-mode
+  :ensure t)
+
 (use-package sml-mode
   :mode "\\.sml\\'"
   :config (add-hook 'sml-mode-hook (lambda ()
@@ -400,7 +403,7 @@
    '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
                  ("begin" "$1" "$" "$$" "\\(" "\\[")))
  '(package-selected-packages
-   '(forge magit-gh-pulls clang-format cov geiser m2-mode m2 flycheck-rust elisp-slime-nav skewer-mode skewer elpy-mode markdown-mode slime-company company-quickhelp rainbow-delimiters-mode company org-ref haskell-mode org helm-bibtex elpy mu4e sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime))
+   '(lsp-mode lsp wgrep forge magit-gh-pulls clang-format cov geiser m2-mode m2 flycheck-rust elisp-slime-nav skewer-mode skewer elpy-mode markdown-mode slime-company company-quickhelp rainbow-delimiters-mode company org-ref haskell-mode org helm-bibtex elpy mu4e sml-mode sml git-commit helm-descbinds multiple-cursors page-break-line zenburn-theme use-package rust-mode rainbow-delimiters paredit magit highlight-symbol highlight-numbers helm auctex slime))
  '(preview-scale-function 4.0)
  '(safe-local-variable-values
    '((c-file-offsets
