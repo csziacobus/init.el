@@ -274,8 +274,9 @@
          . eldoc-mode))
 
 (use-package elpy
-  :hook (python-mode . elpy-mode)
-  :commands (elpy-mode elpy-enable)
+  :ensure t
+  :defer t
+  :init (advice-add 'python-mode :before 'elpy-enable)
   :bind (:map elpy-mode-map
               ("C-c C-c" . elpy-shell-send-top-statement)
               ("C-x C-e" . elpy-shell-send-statement)
