@@ -217,7 +217,6 @@
   :diminish helm-mode
   :config
   (progn
-    (require 'helm-config)
     (setq helm-candidate-number-limit 100)
     ;; From https://gist.github.com/antifuchs/9238468
     (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
