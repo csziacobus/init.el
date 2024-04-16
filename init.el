@@ -304,7 +304,13 @@
 (use-package org-ref)
 
 (use-package lsp-mode
-  :ensure t)
+  :ensure t
+  :hook ((rust-mode . lsp))
+  :commands lsp)
+
+(use-package helm-lsp :ensure t)
+
+(use-package ripgrep :ensure t)
 
 (use-package sml-mode
   :mode "\\.sml\\'"
